@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Wealth Operations Control Tower</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">OPERATIONS & CONTROL</p>
+                <h1>Wealth Operations Control Tower</h1>
+                <p class="subtitle">
+                    Operational monitoring, SLA performance and reconciliation control
+                </p>
+            </div>
+
+            <div class="header-meta">
+                <span class="status-dot"></span>
+                <span>Live analytical view</span>
+            </div>
+        </header>
+
+        <section class="toolbar">
+            <div>
+                <label for="statusFilter">Current status</label>
+                <select id="statusFilter">
+                    <option value="all">All statuses</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="riskFilter">Operational risk</label>
+                <select id="riskFilter">
+                    <option value="all">All risks</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="slaFilter">SLA status</label>
+                <select id="slaFilter">
+                    <option value="all">All SLA statuses</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="reconciliationFilter">Reconciliation</label>
+                <select id="reconciliationFilter">
+                    <option value="all">All results</option>
+                </select>
+            </div>
+
+            <button id="clearFilters" class="secondary-button">
+                Clear filters
+            </button>
+        </section>
+
+        <main>
+
+            <section class="kpi-grid">
+
+                <article class="kpi-card">
+                    <span class="kpi-label">Total operations</span>
+                    <strong id="totalOperations">0</strong>
+                    <span class="kpi-description">Operations monitored</span>
+                </article>
+
+                <article class="kpi-card">
+                    <span class="kpi-label">Financial volume</span>
+                    <strong id="totalVolume">R$ 0</strong>
+                    <span class="kpi-description">Total requested amount</span>
+                </article>
+
+                <article class="kpi-card warning-card">
+                    <span class="kpi-label">Outside SLA</span>
+                    <strong id="outsideSla">0%</strong>
+                    <span class="kpi-description">Operations beyond expected deadline</span>
+                </article>
+
+                <article class="kpi-card">
+                    <span class="kpi-label">Exception rate</span>
+                    <strong id="exceptionRate">0%</strong>
+                    <span class="kpi-description">Operations with exceptions</span>
+                </article>
+
+                <article class="kpi-card critical-card">
+                    <span class="kpi-label">Reconciliation differences</span>
+                    <strong id="reconciliationValue">R$ 0</strong>
+                    <span class="kpi-description">Financial impact of discrepancies</span>
+                </article>
+
+            </section>
+
+            <section class="dashboard-grid">
+
+                <article class="panel large-panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-kicker">OPERATIONS</p>
+                            <h2>Operations by current status</h2>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-kicker">SERVICE LEVEL</p>
+                            <h2>SLA performance</h2>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="slaChart"></canvas>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-kicker">RISK</p>
+                            <h2>Operational risk</h2>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                </article>
+
+                <article class="panel large-panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-kicker">RECONCILIATION</p>
+                            <h2>Reconciliation overview</h2>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="reconciliationChart"></canvas>
+                    </div>
+                </article>
+
+                <article class="panel large-panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-kicker">FINANCIAL EXPOSURE</p>
+                            <h2>Financial volume by operation type</h2>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="volumeChart"></canvas>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-kicker">EXCEPTIONS</p>
+                            <h2>Exception summary</h2>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="exceptionChart"></canvas>
+                    </div>
+                </article>
+
+            </section>
+
+            <section class="panel table-panel">
+
+                <div class="panel-header table-header">
+                    <div>
+                        <p class="panel-kicker">CONTROL QUEUE</p>
+                        <h2>Operational exceptions and priority queue</h2>
+                    </div>
+
+                    <span id="tableCount" class="table-count">0 operations</span>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Operation ID</th>
+                                <th>Client</th>
+                                <th>Operation type</th>
+                                <th>Requested amount</th>
+                                <th>Current status</th>
+                                <th>SLA</th>
+                                <th>Risk</th>
+                                <th>Reconciliation</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="operationsTable"></tbody>
+                    </table>
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer>
+            <span>Wealth Operations Control Tower</span>
+            <span>Fictional data for portfolio demonstration</span>
+        </footer>
+
+    </div>
+
+    <script src="js/dashboard.js"></script>
+
+</body>
+</html>
