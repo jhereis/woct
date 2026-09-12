@@ -5,11 +5,14 @@ let filteredOperations = [];
 
 let charts = {};
 
-const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+function formatCurrency(value) {
+  return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
-    maximumFractionDigits: 0
-});
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(value);
+}
 
 const numberFormatter = new Intl.NumberFormat("pt-BR");
 
