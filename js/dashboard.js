@@ -1,5 +1,4 @@
-const CSV_PATH = "https://github.com/jhereis/basewoct/blob/main/dashboard_operations.csv";
-
+const CSV_PATH = "../data/processed/dashboard_operations.csv";
 let allOperations = [];
 let filteredOperations = [];
 
