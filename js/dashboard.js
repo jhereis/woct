@@ -1,4 +1,4 @@
-const CSV_PATH = "https://github.com/jhereis/basewoct/blob/0bd5156ab9f353b356d61ddec9cfaf6f70c814f7/operations_enriched.csv";
+const CSV_PATH = "https://raw.githubusercontent.com/jhereis/woct/main/data/operations_enriched.csv";
 
 let allOperations = [];
 let filteredOperations = [];
