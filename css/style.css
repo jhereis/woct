@@ -344,12 +344,19 @@ select:focus {
     position: relative;
     z-index: 1;
     display: block;
+    width: 100%;
+    max-width: 100%;
     margin: 14px 0 8px;
+
     color: var(--navy);
-    font-size: 29px;
+    font-size: clamp(20px, 2vw, 29px);
     font-weight: 750;
     letter-spacing: -1.2px;
     line-height: 1.1;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .kpi-description {
