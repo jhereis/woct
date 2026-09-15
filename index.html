@@ -1,224 +1,755 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WOCT | Wealth Operations Control Tower</title>
 
-    <title>Wealth Operations Control Tower</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.468.0/font/Lucide.css">
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0d1b2d;
+      --panel-2: #10243a;
+      --border: rgba(164, 184, 207, .16);
+      --text: #eef4fb;
+      --muted: #8ea3ba;
+      --accent: #69a7ff;
+      --success: #43d19a;
+      --warning: #f5bd61;
+      --danger: #ff7373;
+      --info: #9b8cff;
+      --shadow: 0 18px 45px rgba(0,0,0,.18);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: radial-gradient(circle at 15% 0%, #142b47 0, transparent 32%), var(--bg);
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    .container { width: min(1440px, calc(100% - 40px)); margin: 0 auto; }
+    header {
+      padding: 34px 0 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.04em; }
+    .subtitle { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warning); }
+    .dot.ok { background: var(--success); }
+    .dot.error { background: var(--danger); }
+
+    main { padding: 26px 0 42px; }
+    .toolbar {
+      display: flex; gap: 12px; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; margin-bottom: 18px;
+    }
+    .toolbar-left, .toolbar-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    select, input, button {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      font-size: 12px;
+    }
+    button { cursor: pointer; }
+    button:hover { border-color: var(--accent); }
+    .btn-primary { background: var(--accent); color: #07111f; border-color: var(--accent); font-weight: 800; }
+
+    .grid { display: grid; gap: 16px; }
+    .kpi-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .card {
+      background: linear-gradient(145deg, rgba(16,36,58,.96), rgba(10,24,40,.96));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    .kpi { padding: 20px; min-height: 132px; }
+    .kpi-label { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+    .kpi-value { margin-top: 14px; font-size: clamp(25px, 3vw, 34px); font-weight: 800; letter-spacing: -.04em; }
+    .kpi-note { color: var(--muted); margin-top: 8px; font-size: 11px; }
+
+    .two-col { grid-template-columns: 1.1fr .9fr; margin-top: 16px; }
+    .three-col { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 16px; }
+    .section { padding: 20px; min-width: 0; }
+    .section-title { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 18px; }
+    h2 { margin: 0; font-size: 15px; letter-spacing: -.02em; }
+    .section-caption { color: var(--muted); font-size: 11px; }
+
+    .chart-wrap { height: 285px; position: relative; }
+    .chart-wrap.small { height: 230px; }
+
+    .table-card { margin-top: 16px; overflow: hidden; }
+    .table-header { padding: 20px; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
+    th, td { padding: 13px 16px; border-top: 1px solid var(--border); text-align: left; font-size: 12px; white-space: nowrap; }
+    th { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; background: rgba(0,0,0,.12); }
+    td { color: #dce8f5; }
+    tr:hover td { background: rgba(105,167,255,.05); }
+    .badge {
+      display: inline-flex; align-items: center; border-radius: 999px;
+      padding: 5px 8px; font-size: 10px; font-weight: 800;
+      background: rgba(142,163,186,.13); color: #c8d7e8;
+    }
+    .badge.success { color: var(--success); background: rgba(67,209,154,.12); }
+    .badge.warning { color: var(--warning); background: rgba(245,189,97,.12); }
+    .badge.danger { color: var(--danger); background: rgba(255,115,115,.12); }
+    .badge.info { color: var(--info); background: rgba(155,140,255,.12); }
+
+    .empty, .error-box {
+      padding: 28px; border-radius: 12px; color: var(--muted);
+      border: 1px dashed var(--border); text-align: center;
+    }
+    .error-box { color: var(--danger); text-align: left; display: none; margin-top: 16px; }
+    footer { color: var(--muted); font-size: 11px; line-height: 1.7; padding: 24px 0 10px; border-top: 1px solid var(--border); }
+
+    @media (max-width: 1100px) {
+      .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .two-col, .three-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 650px) {
+      .container { width: min(100% - 24px, 1440px); }
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .kpi { padding: 15px; }
+    }
+  </style>
 </head>
 
 <body>
+  <header>
+    <div class="container">
+      <div class="eyebrow">Wealth Management Operations</div>
+      <h1>Wealth Operations Control Tower</h1>
+      <p class="subtitle">Lifecycle monitoring, SLA control, exceptions and reconciliation.</p>
+      <div class="status">
+        <span id="statusDot" class="dot"></span>
+        <span id="statusText">Loading operational dataset...</span>
+      </div>
+    </div>
+  </header>
 
-    <div class="app-container">
-
-        <header class="topbar">
-            <div>
-                <p class="eyebrow">OPERATIONS & CONTROL</p>
-                <h1>Wealth Operations Control Tower</h1>
-                <p class="subtitle">
-                    Operational monitoring, SLA performance and reconciliation control
-                </p>
-            </div>
-
-            <div class="header-meta">
-                <span class="status-dot"></span>
-                <span>Live analytical view</span>
-            </div>
-        </header>
-
-        <section class="toolbar">
-            <div>
-                <label for="statusFilter">Current status</label>
-                <select id="statusFilter">
-                    <option value="all">All statuses</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="riskFilter">Operational risk</label>
-                <select id="riskFilter">
-                    <option value="all">All risks</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="slaFilter">SLA status</label>
-                <select id="slaFilter">
-                    <option value="all">All SLA statuses</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="reconciliationFilter">Reconciliation</label>
-                <select id="reconciliationFilter">
-                    <option value="all">All results</option>
-                </select>
-            </div>
-
-            <button id="clearFilters" class="secondary-button">
-                Clear filters
-            </button>
-        </section>
-
-        <main>
-
-            <section class="kpi-grid">
-
-                <article class="kpi-card">
-                    <span class="kpi-label">Total operations</span>
-                    <strong id="totalOperations">0</strong>
-                    <span class="kpi-description">Operations monitored</span>
-                </article>
-
-                <article class="kpi-card">
-                    <span class="kpi-label">Financial volume</span>
-                    <strong id="totalVolume">R$ 0</strong>
-                    <span class="kpi-description">Total requested amount</span>
-                </article>
-
-                <article class="kpi-card warning-card">
-                    <span class="kpi-label">Outside SLA</span>
-                    <strong id="outsideSla">0%</strong>
-                    <span class="kpi-description">Operations beyond expected deadline</span>
-                </article>
-
-                <article class="kpi-card">
-                    <span class="kpi-label">Exception rate</span>
-                    <strong id="exceptionRate">0%</strong>
-                    <span class="kpi-description">Operations with exceptions</span>
-                </article>
-
-                <article class="kpi-card critical-card">
-                    <span class="kpi-label">Reconciliation differences</span>
-                    <strong id="reconciliationValue">R$ 0</strong>
-                    <span class="kpi-description">Financial impact of discrepancies</span>
-                </article>
-
-            </section>
-
-            <section class="dashboard-grid">
-
-                <article class="panel large-panel">
-                    <div class="panel-header">
-                        <div>
-                            <p class="panel-kicker">OPERATIONS</p>
-                            <h2>Operations by current status</h2>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="statusChart"></canvas>
-                    </div>
-                </article>
-
-                <article class="panel">
-                    <div class="panel-header">
-                        <div>
-                            <p class="panel-kicker">SERVICE LEVEL</p>
-                            <h2>SLA performance</h2>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="slaChart"></canvas>
-                    </div>
-                </article>
-
-                <article class="panel">
-                    <div class="panel-header">
-                        <div>
-                            <p class="panel-kicker">RISK</p>
-                            <h2>Operational risk</h2>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="riskChart"></canvas>
-                    </div>
-                </article>
-
-                <article class="panel large-panel">
-                    <div class="panel-header">
-                        <div>
-                            <p class="panel-kicker">RECONCILIATION</p>
-                            <h2>Reconciliation overview</h2>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="reconciliationChart"></canvas>
-                    </div>
-                </article>
-
-                <article class="panel large-panel">
-                    <div class="panel-header">
-                        <div>
-                            <p class="panel-kicker">FINANCIAL EXPOSURE</p>
-                            <h2>Financial volume by operation type</h2>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="volumeChart"></canvas>
-                    </div>
-                </article>
-
-                <article class="panel">
-                    <div class="panel-header">
-                        <div>
-                            <p class="panel-kicker">EXCEPTIONS</p>
-                            <h2>Exception summary</h2>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="exceptionChart"></canvas>
-                    </div>
-                </article>
-
-            </section>
-
-            <section class="panel table-panel">
-
-                <div class="panel-header table-header">
-                    <div>
-                        <p class="panel-kicker">CONTROL QUEUE</p>
-                        <h2>Operational exceptions and priority queue</h2>
-                    </div>
-
-                    <span id="tableCount" class="table-count">0 operations</span>
-                </div>
-
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Operation ID</th>
-                                <th>Client</th>
-                                <th>Operation type</th>
-                                <th>Requested amount</th>
-                                <th>Current status</th>
-                                <th>SLA</th>
-                                <th>Risk</th>
-                                <th>Reconciliation</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="operationsTable"></tbody>
-                    </table>
-                </div>
-
-            </section>
-
-        </main>
-
-        <footer>
-            <span>Wealth Operations Control Tower</span>
-            <span>Fictional data for portfolio demonstration</span>
-        </footer>
-
+  <main class="container">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <label for="statusFilter" class="section-caption">Status</label>
+        <select id="statusFilter">
+          <option value="all">All statuses</option>
+        </select>
+        <label for="riskFilter" class="section-caption">Risk</label>
+        <select id="riskFilter">
+          <option value="all">All risk levels</option>
+        </select>
+        <input id="searchInput" type="search" placeholder="Search operation, team or category..." />
+      </div>
+      <div class="toolbar-right">
+        <button id="reloadBtn" class="btn-primary">Reload data</button>
+      </div>
     </div>
 
-    <script src="js/dashboard.js"></script>
+    <div id="errorBox" class="error-box"></div>
 
+    <section class="grid kpi-grid">
+      <article class="card kpi">
+        <div class="kpi-label">Total operations</div>
+        <div id="kpiTotal" class="kpi-value">—</div>
+        <div class="kpi-note">Records loaded from CSV</div>
+      </article>
+      <article class="card kpi">
+        <div class="kpi-label">Requested amount</div>
+        <div id="kpiAmount" class="kpi-value">—</div>
+        <div class="kpi-note">Total requested amount</div>
+      </article>
+      <article class="card kpi">
+        <div class="kpi-label">Outside SLA</div>
+        <div id="kpiSla" class="kpi-value">—</div>
+        <div class="kpi-note">Operations requiring attention</div>
+      </article>
+      <article class="card kpi">
+        <div class="kpi-label">Exceptions</div>
+        <div id="kpiExceptions" class="kpi-value">—</div>
+        <div class="kpi-note">Flagged operational records</div>
+      </article>
+      <article class="card kpi">
+        <div class="kpi-label">Critical risk</div>
+        <div id="kpiCritical" class="kpi-value">—</div>
+        <div class="kpi-note">High-priority risk exposure</div>
+      </article>
+    </section>
+
+    <section class="grid two-col">
+      <article class="card section">
+        <div class="section-title">
+          <h2>Operations by status</h2>
+          <span class="section-caption">Current lifecycle status</span>
+        </div>
+        <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+      </article>
+      <article class="card section">
+        <div class="section-title">
+          <h2>Risk distribution</h2>
+          <span class="section-caption">Operational risk classification</span>
+        </div>
+        <div class="chart-wrap"><canvas id="riskChart"></canvas></div>
+      </article>
+    </section>
+
+    <section class="grid three-col">
+      <article class="card section">
+        <div class="section-title">
+          <h2>Exceptions by type</h2>
+          <span class="section-caption">Control breaks</span>
+        </div>
+        <div class="chart-wrap small"><canvas id="exceptionChart"></canvas></div>
+      </article>
+      <article class="card section">
+        <div class="section-title">
+          <h2>SLA performance</h2>
+          <span class="section-caption">Within vs. outside SLA</span>
+        </div>
+        <div class="chart-wrap small"><canvas id="slaChart"></canvas></div>
+      </article>
+      <article class="card section">
+        <div class="section-title">
+          <h2>Operations by category</h2>
+          <span class="section-caption">Business activity</span>
+        </div>
+        <div class="chart-wrap small"><canvas id="categoryChart"></canvas></div>
+      </article>
+    </section>
+
+    <section class="card table-card">
+      <div class="table-header">
+        <div>
+          <h2>Operational records</h2>
+          <div id="tableCaption" class="section-caption">Showing 0 records</div>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Operation ID</th>
+              <th>Status</th>
+              <th>Stage</th>
+              <th>Priority</th>
+              <th>Responsible team</th>
+              <th>Category</th>
+              <th>Exception</th>
+              <th>SLA</th>
+              <th>Risk</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="operationsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <strong>Data source:</strong> Synthetic operational dataset | 500 transactions<br>
+      <strong>Processing:</strong> Python, Pandas, SQL and rule-based controls<br>
+      <strong>Scope:</strong> Lifecycle monitoring, SLA, exceptions and reconciliation
+    </footer>
+  </main>
+
+  <script>
+/*
+  WOCT - Wealth Operations Control Tower
+  Reads CSV files located in the repository root.
+
+  Expected repository structure:
+  /
+  ├── index.html
+  ├── dashboard.js
+  ├── operations_enriched.csv
+  ├── dashboard_operations.csv
+  └── reconciliation__results.csv
+*/
+
+const DATA_URLS = [
+  "./operations_enriched.csv",
+  "./dashboard_operations.csv"
+];
+
+const RECONCILIATION_URLS = [
+  "./reconciliation__results.csv",
+  "./reconciliation_results.csv"
+];
+
+let allRows = [];
+let filteredRows = [];
+const charts = {};
+
+const $ = (id) => document.getElementById(id);
+
+function normalizeKey(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function getValue(row, aliases, fallback = "") {
+  const normalized = {};
+  Object.keys(row || {}).forEach((key) => {
+    normalized[normalizeKey(key)] = row[key];
+  });
+
+  for (const alias of aliases) {
+    const value = normalized[normalizeKey(alias)];
+    if (value !== undefined && value !== null && String(value).trim() !== "") {
+      return value;
+    }
+  }
+  return fallback;
+}
+
+function toNumber(value) {
+  if (typeof value === "number") return value;
+  if (value === null || value === undefined || value === "") return 0;
+
+  let text = String(value).trim().replace(/[R$\s]/g, "");
+  if (text.includes(",") && text.includes(".")) {
+    if (text.lastIndexOf(",") > text.lastIndexOf(".")) {
+      text = text.replace(/\./g, "").replace(",", ".");
+    } else {
+      text = text.replace(/,/g, "");
+    }
+  } else if (text.includes(",")) {
+    text = text.replace(",", ".");
+  }
+
+  const number = Number(text.replace(/[^\d.-]/g, ""));
+  return Number.isFinite(number) ? number : 0;
+}
+
+function cleanText(value, fallback = "Not informed") {
+  const text = String(value ?? "").trim();
+  return text || fallback;
+}
+
+function formatNumber(value) {
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0
+  }).format(value);
+}
+
+function uniqueValues(rows, fieldAliases) {
+  return [...new Set(rows.map(row => cleanText(getValue(row, fieldAliases, "Not informed"))))]
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
+}
+
+function countBy(rows, aliases) {
+  const counts = {};
+  rows.forEach(row => {
+    const value = cleanText(getValue(row, aliases, "Not informed"));
+    counts[value] = (counts[value] || 0) + 1;
+  });
+  return counts;
+}
+
+function findSlaStatus(row) {
+  return cleanText(getValue(row, [
+    "sla_status", "SLA Status", "sla", "status_sla", "sla_flag"
+  ], "Not informed"));
+}
+
+function isOutsideSla(row) {
+  const value = findSlaStatus(row).toLowerCase();
+  return value.includes("outside") ||
+    value.includes("breach") ||
+    value.includes("overdue") ||
+    value.includes("fora") ||
+    value.includes("high");
+}
+
+function isException(row) {
+  const flag = String(getValue(row, [
+    "exception_flag", "has_exception", "exception", "flag_exception"
+  ], "")).toLowerCase();
+
+  const type = cleanText(getValue(row, [
+    "exception_type", "exception_category", "exception_reason"
+  ], ""), "").toLowerCase();
+
+  return ["true", "yes", "sim", "1", "y"].includes(flag) ||
+    (type !== "" && type !== "none" && type !== "nan" && type !== "not informed");
+}
+
+function isCritical(row) {
+  const values = [
+    getValue(row, ["operational_risk", "risk", "risk_level", "risk_classification"], ""),
+    getValue(row, ["priority", "priority_level"], ""),
+    getValue(row, ["exception_severity", "severity"], "")
+  ].join(" ").toLowerCase();
+
+  return values.includes("critical") ||
+    values.includes("critico") ||
+    values.includes("critical risk");
+}
+
+function normalizeRow(row) {
+  return {
+    ...row,
+    _id: cleanText(getValue(row, [
+      "operation_id", "operationid", "id", "transaction_id"
+    ], "N/A")),
+    _status: cleanText(getValue(row, [
+      "current_status", "status", "operation_status", "lifecycle_status"
+    ])),
+    _stage: cleanText(getValue(row, [
+      "current_stage", "stage", "operation_stage", "lifecycle_stage"
+    ])),
+    _priority: cleanText(getValue(row, ["priority", "priority_level"])),
+    _team: cleanText(getValue(row, [
+      "responsible_team", "team", "responsible", "owner_team"
+    ])),
+    _category: cleanText(getValue(row, [
+      "operation_category", "category", "operation_type", "transaction_type"
+    ])),
+    _exceptionType: cleanText(getValue(row, [
+      "exception_type", "exception_category", "exception_reason"
+    ], "None")),
+    _sla: findSlaStatus(row),
+    _risk: cleanText(getValue(row, [
+      "operational_risk", "risk", "risk_level", "risk_classification"
+    ])),
+    _amount: toNumber(getValue(row, [
+      "total_requested_amount", "requested_amount", "amount", "transaction_amount",
+      "valor", "value", "amount_requested"
+    ], 0))
+  };
+}
+
+async function fetchCsv(url) {
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText} — ${url}`);
+  }
+
+  const text = await response.text();
+  if (!text.trim()) throw new Error(`The CSV is empty — ${url}`);
+
+  return new Promise((resolve, reject) => {
+    Papa.parse(text, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: header => header.trim(),
+      complete: results => {
+        if (results.errors?.length) {
+          console.warn("CSV parsing warnings:", results.errors);
+        }
+        resolve(results.data);
+      },
+      error: reject
+    });
+  });
+}
+
+async function loadData() {
+  setStatus("Loading operational dataset...", "loading");
+  hideError();
+
+  let rows = null;
+  let lastError = null;
+
+  for (const url of DATA_URLS) {
+    try {
+      rows = await fetchCsv(url);
+      console.info(`WOCT data loaded from ${url}`, rows);
+      break;
+    } catch (error) {
+      lastError = error;
+      console.warn(error.message);
+    }
+  }
+
+  if (!rows) {
+    throw new Error(
+      `Could not load the operational CSV. Last error: ${lastError?.message || "unknown error"}`
+    );
+  }
+
+  allRows = rows.map(normalizeRow);
+  filteredRows = [...allRows];
+
+  populateFilters();
+  renderAll();
+  setStatus(`${allRows.length} operational records loaded`, "ok");
+}
+
+function populateFilters() {
+  const statusFilter = $("statusFilter");
+  const riskFilter = $("riskFilter");
+
+  statusFilter.innerHTML = '<option value="all">All statuses</option>';
+  riskFilter.innerHTML = '<option value="all">All risk levels</option>';
+
+  uniqueValues(allRows, ["current_status", "status", "operation_status"])
+    .forEach(value => statusFilter.add(new Option(value, value)));
+
+  uniqueValues(allRows, ["operational_risk", "risk", "risk_level", "risk_classification"])
+    .forEach(value => riskFilter.add(new Option(value, value)));
+}
+
+function applyFilters() {
+  const status = $("statusFilter").value;
+  const risk = $("riskFilter").value;
+  const search = $("searchInput").value.trim().toLowerCase();
+
+  filteredRows = allRows.filter(row => {
+    const statusMatch = status === "all" || row._status === status;
+    const riskMatch = risk === "all" || row._risk === risk;
+    const searchable = [
+      row._id, row._status, row._stage, row._priority,
+      row._team, row._category, row._exceptionType, row._sla, row._risk
+    ].join(" ").toLowerCase();
+
+    return statusMatch && riskMatch && (!search || searchable.includes(search));
+  });
+
+  renderAll();
+}
+
+function renderAll() {
+  renderKpis();
+  renderCharts();
+  renderTable();
+}
+
+function renderKpis() {
+  const total = filteredRows.length;
+  const amount = filteredRows.reduce((sum, row) => sum + row._amount, 0);
+  const outsideSla = filteredRows.filter(isOutsideSla).length;
+  const exceptions = filteredRows.filter(isException).length;
+  const critical = filteredRows.filter(isCritical).length;
+
+  $("kpiTotal").textContent = formatNumber(total);
+  $("kpiAmount").textContent = formatCurrency(amount);
+  $("kpiSla").textContent = formatNumber(outsideSla);
+  $("kpiExceptions").textContent = formatNumber(exceptions);
+  $("kpiCritical").textContent = formatNumber(critical);
+}
+
+function chartDefaults() {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: "#b8c9dc", font: { family: "Inter", size: 11 } }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: "#8ea3ba", font: { family: "Inter", size: 10 } },
+        grid: { color: "rgba(164,184,207,.08)" }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: { color: "#8ea3ba", font: { family: "Inter", size: 10 }, precision: 0 },
+        grid: { color: "rgba(164,184,207,.08)" }
+      }
+    }
+  };
+}
+
+function destroyChart(name) {
+  if (charts[name]) charts[name].destroy();
+}
+
+function createBarChart(name, canvasId, counts, horizontal = false) {
+  destroyChart(name);
+  const labels = Object.keys(counts);
+  charts[name] = new Chart($(canvasId), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        data: Object.values(counts),
+        borderWidth: 0,
+        borderRadius: 5,
+        backgroundColor: "#69a7ff"
+      }]
+    },
+    options: {
+      ...chartDefaults(),
+      indexAxis: horizontal ? "y" : "x",
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function createDoughnutChart(name, canvasId, counts) {
+  destroyChart(name);
+  charts[name] = new Chart($(canvasId), {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(counts),
+      datasets: [{
+        data: Object.values(counts),
+        borderWidth: 2,
+        borderColor: "#0d1b2d",
+        backgroundColor: ["#69a7ff", "#43d19a", "#f5bd61", "#ff7373", "#9b8cff", "#65d6d0"]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: "64%",
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { color: "#b8c9dc", font: { family: "Inter", size: 10 }, padding: 12 }
+        }
+      }
+    }
+  });
+}
+
+function renderCharts() {
+  createBarChart("status", "statusChart", countBy(filteredRows, ["current_status", "status", "operation_status"]));
+  createDoughnutChart("risk", "riskChart", countBy(filteredRows, ["operational_risk", "risk", "risk_level", "risk_classification"]));
+  createBarChart("exception", "exceptionChart", countBy(filteredRows.filter(isException), ["exception_type", "exception_category", "exception_reason"]), true);
+
+  const slaCounts = { "Within SLA": 0, "Outside SLA": 0 };
+  filteredRows.forEach(row => {
+    if (isOutsideSla(row)) slaCounts["Outside SLA"]++;
+    else slaCounts["Within SLA"]++;
+  });
+  createDoughnutChart("sla", "slaChart", slaCounts);
+
+  createBarChart("category", "categoryChart", countBy(filteredRows, ["operation_category", "category", "operation_type", "transaction_type"]), true);
+}
+
+function badgeClass(value) {
+  const text = String(value).toLowerCase();
+  if (text.includes("critical") || text.includes("outside") || text.includes("breach") || text.includes("failed") || text.includes("error")) return "danger";
+  if (text.includes("high") || text.includes("pending") || text.includes("warning") || text.includes("difference")) return "warning";
+  if (text.includes("matched") || text.includes("complete") || text.includes("settled") || text.includes("within") || text.includes("low")) return "success";
+  if (text.includes("medium") || text.includes("review")) return "info";
+  return "";
+}
+
+function badge(value) {
+  const safe = cleanText(value);
+  return `<span class="badge ${badgeClass(safe)}">${escapeHtml(safe)}</span>`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function renderTable() {
+  const tbody = $("operationsTableBody");
+  tbody.innerHTML = "";
+
+  const rowsToShow = filteredRows.slice(0, 100);
+
+  if (!rowsToShow.length) {
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty">No records match the selected filters.</div></td></tr>`;
+  } else {
+    rowsToShow.forEach(row => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${escapeHtml(row._id)}</strong></td>
+        <td>${badge(row._status)}</td>
+        <td>${escapeHtml(row._stage)}</td>
+        <td>${badge(row._priority)}</td>
+        <td>${escapeHtml(row._team)}</td>
+        <td>${escapeHtml(row._category)}</td>
+        <td>${isException(row) ? badge(row._exceptionType) : '<span class="badge success">None</span>'}</td>
+        <td>${badge(row._sla)}</td>
+        <td>${badge(row._risk)}</td>
+        <td>${formatCurrency(row._amount)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  $("tableCaption").textContent =
+    `Showing ${Math.min(rowsToShow.length, 100)} of ${filteredRows.length} records`;
+}
+
+function setStatus(message, state) {
+  $("statusText").textContent = message;
+  $("statusDot").className = `dot ${state === "ok" ? "ok" : state === "error" ? "error" : ""}`;
+}
+
+function showError(message) {
+  $("errorBox").style.display = "block";
+  $("errorBox").innerHTML = `
+    <strong>Data loading error</strong><br>
+    ${escapeHtml(message)}<br><br>
+    Confirm that <code>operations_enriched.csv</code> is in the repository root
+    and that GitHub Pages is publishing the <code>main</code> branch.
+  `;
+  setStatus("Could not load the dataset", "error");
+}
+
+function hideError() {
+  $("errorBox").style.display = "none";
+}
+
+$("statusFilter").addEventListener("change", applyFilters);
+$("riskFilter").addEventListener("change", applyFilters);
+$("searchInput").addEventListener("input", applyFilters);
+$("reloadBtn").addEventListener("click", () => {
+  loadData().catch(error => {
+    console.error(error);
+    showError(error.message);
+  });
+});
+
+loadData().catch(error => {
+  console.error("WOCT initialization failed:", error);
+  showError(error.message);
+});
+
+</script>
 </body>
 </html>
