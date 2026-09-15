@@ -1,8 +1,52 @@
 const CSV_PATH = "../data/processed/dashboard_operations.csv";
+
 let allOperations = [];
 let filteredOperations = [];
 
 let charts = {};
+
+/* =========================================================
+   WOCT — Institutional Color Palette
+   ========================================================= */
+
+const CHART_COLORS = [
+    "#315D9B", // Azul institucional
+    "#557DB2", // Azul médio
+    "#7899C4", // Azul intermediário
+    "#8FA8CC", // Azul suave
+    "#B5C5DA", // Azul claro
+    "#D5DFEC", // Azul muito suave
+    "#E3EAF3", // Azul quase branco
+    "#6B88B5", // Azul complementar
+    "#476D9F", // Azul escuro médio
+    "#244A82"  // Azul-marinho
+];
+
+const SLA_COLORS = [
+    "#315D9B",
+    "#557DB2",
+    "#8FA8CC",
+    "#D5DFEC"
+];
+
+const RECONCILIATION_COLORS = [
+    "#315D9B", // Matched
+    "#C98218", // Status Difference
+    "#C9281D", // Amount Difference
+    "#8FA8CC"  // Missing in External System
+];
+
+const EXCEPTION_COLORS = [
+    "#C98218",
+    "#C9281D",
+    "#557DB2",
+    "#8FA8CC",
+    "#B5C5DA"
+];
+
+/* =========================================================
+   Formatters
+   ========================================================= */
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -14,7 +58,12 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
 function formatCurrency(value) {
     return currencyFormatter.format(value);
 }
+
 const numberFormatter = new Intl.NumberFormat("pt-BR");
+
+/* =========================================================
+   Helpers
+   ========================================================= */
 
 function parseNumber(value) {
     if (value === null || value === undefined || value === "") {
@@ -39,6 +88,10 @@ function uniqueValues(data, field) {
             .filter(value => value !== undefined && value !== "")
     )].sort();
 }
+
+/* =========================================================
+   Filters
+   ========================================================= */
 
 function populateFilters() {
     const filters = [
@@ -102,6 +155,10 @@ function clearFilters() {
     applyFilters();
 }
 
+/* =========================================================
+   Aggregations
+   ========================================================= */
+
 function countByField(data, field) {
     return data.reduce((result, row) => {
         const value = row[field] || "Not informed";
@@ -117,6 +174,10 @@ function sumByField(data, categoryField, valueField) {
         return result;
     }, {});
 }
+
+/* =========================================================
+   KPIs
+   ========================================================= */
 
 function updateKpis() {
     const total = filteredOperations.length;
@@ -159,64 +220,125 @@ function updateKpis() {
         currencyFormatter.format(reconciliationValue);
 }
 
+/* =========================================================
+   Chart Defaults
+   ========================================================= */
+
 function chartOptions(showLegend = false) {
     return {
         responsive: true,
         maintainAspectRatio: false,
+
         plugins: {
             legend: {
                 display: showLegend,
-                position: "bottom"
+                position: "bottom",
+
+                labels: {
+                    color: "#697386",
+                    font: {
+                        family: "Inter, Arial, sans-serif",
+                        size: 12
+                    },
+                    padding: 18,
+                    usePointStyle: true,
+                    pointStyle: "circle"
+                }
+            },
+
+            tooltip: {
+                backgroundColor: "#172033",
+                titleColor: "#FFFFFF",
+                bodyColor: "#FFFFFF",
+                borderColor: "#E3E8EF",
+                borderWidth: 1,
+                padding: 12,
+                cornerRadius: 8
             }
         },
+
         scales: {
             y: {
                 beginAtZero: true,
+
                 grid: {
-                    color: "#edf0f4"
+                    color: "#E3E8EF",
+                    drawBorder: false
                 },
+
                 ticks: {
-                    precision: 0
+                    precision: 0,
+                    color: "#697386",
+                    font: {
+                        family: "Inter, Arial, sans-serif",
+                        size: 11
+                    }
                 }
             },
+
             x: {
                 grid: {
-                    display: false
+                    display: false,
+                    drawBorder: false
+                },
+
+                ticks: {
+                    color: "#697386",
+                    font: {
+                        family: "Inter, Arial, sans-serif",
+                        size: 11
+                    }
                 }
             }
         }
     };
 }
 
+/* =========================================================
+   Chart Creation
+   ========================================================= */
+
 function createOrUpdateChart(id, type, labels, values, options = {}) {
     if (charts[id]) {
         charts[id].destroy();
+    }
+
+    let colors = CHART_COLORS;
+
+    if (id === "slaChart") {
+        colors = SLA_COLORS;
+    }
+
+    if (id === "reconciliationChart") {
+        colors = RECONCILIATION_COLORS;
+    }
+
+    if (id === "exceptionChart") {
+        colors = EXCEPTION_COLORS;
     }
 
     charts[id] = new Chart(
         document.getElementById(id),
         {
             type,
+
             data: {
                 labels,
+
                 datasets: [{
                     data: values,
-                    backgroundColor: [
-                        "#315b9b",
-                        "#5579ae",
-                        "#7896c2",
-                        "#9aafd0",
-                        "#b8c7dc",
-                        "#d1dbe9",
-                        "#e1e7f0",
-                        "#8b9bb5",
-                        "#64748b",
-                        "#475569"
-                    ],
-                    borderWidth: 0,
-                    borderRadius: 5
+
+                    backgroundColor: colors,
+
+                    borderColor: "#FFFFFF",
+                    borderWidth: type === "doughnut" ? 3 : 0,
+
+                    borderRadius: type === "bar" ? 5 : 0,
+
+                    hoverOffset: type === "doughnut" ? 4 : 0
                 }]
             },
+
             options: {
                 ...chartOptions(options.showLegend),
                 ...options
@@ -225,8 +347,19 @@ function createOrUpdateChart(id, type, labels, values, options = {}) {
     );
 }
 
+/* =========================================================
+   Charts
+   ========================================================= */
+
 function updateCharts() {
-    const statusData = countByField(filteredOperations, "current_status");
+
+    /* Operations by current status */
+
+    const statusData = countByField(
+        filteredOperations,
+        "current_status"
+    );
+
     createOrUpdateChart(
         "statusChart",
         "bar",
@@ -237,7 +370,14 @@ function updateCharts() {
         }
     );
 
-    const slaData = countByField(filteredOperations, "sla_status");
+
+    /* SLA performance */
+
+    const slaData = countByField(
+        filteredOperations,
+        "sla_status"
+    );
+
     createOrUpdateChart(
         "slaChart",
         "doughnut",
@@ -245,17 +385,30 @@ function updateCharts() {
         Object.values(slaData),
         {
             showLegend: true,
-            scales: {}
+
+            scales: {},
+
+            cutout: "62%"
         }
     );
 
-    const riskData = countByField(filteredOperations, "operational_risk");
+
+    /* Operational risk */
+
+    const riskData = countByField(
+        filteredOperations,
+        "operational_risk"
+    );
+
     createOrUpdateChart(
         "riskChart",
         "bar",
         Object.keys(riskData),
         Object.values(riskData)
     );
+
+
+    /* Reconciliation */
 
     const reconciliationData = countByField(
         filteredOperations,
@@ -272,6 +425,9 @@ function updateCharts() {
         }
     );
 
+
+    /* Financial volume by operation type */
+
     const volumeData = sumByField(
         filteredOperations,
         "operation_type",
@@ -285,6 +441,7 @@ function updateCharts() {
         Object.values(volumeData),
         {
             indexAxis: "y",
+
             plugins: {
                 tooltip: {
                     callbacks: {
@@ -295,6 +452,9 @@ function updateCharts() {
             }
         }
     );
+
+
+    /* Exceptions */
 
     const exceptionData = countByField(
         filteredOperations.filter(operation =>
@@ -314,6 +474,10 @@ function updateCharts() {
     );
 }
 
+/* =========================================================
+   Badges
+   ========================================================= */
+
 function badgeClass(value) {
     const normalized = String(value || "").toLowerCase();
 
@@ -323,12 +487,20 @@ function badgeClass(value) {
     if (normalized.includes("within")) return "badge badge-within";
     if (normalized.includes("outside")) return "badge badge-outside";
     if (normalized.includes("matched")) return "badge badge-matched";
-    if (normalized.includes("difference") || normalized.includes("missing")) {
+
+    if (
+        normalized.includes("difference") ||
+        normalized.includes("missing")
+    ) {
         return "badge badge-divergence";
     }
 
     return "badge";
 }
+
+/* =========================================================
+   Operations Table
+   ========================================================= */
 
 function updateTable() {
     const tableBody = document.getElementById("operationsTable");
@@ -394,17 +566,26 @@ function updateTable() {
         `${priorityOperations.length} priority operations`;
 }
 
+/* =========================================================
+   Dashboard
+   ========================================================= */
+
 function updateDashboard() {
     updateKpis();
     updateCharts();
     updateTable();
 }
 
+/* =========================================================
+   CSV Loading
+   ========================================================= */
+
 function loadCsv() {
     Papa.parse(CSV_PATH, {
         download: true,
         header: true,
         skipEmptyLines: true,
+
         complete: results => {
             allOperations = results.data;
             filteredOperations = [...allOperations];
@@ -412,8 +593,10 @@ function loadCsv() {
             populateFilters();
             updateDashboard();
         },
+
         error: error => {
             console.error("Error loading CSV:", error);
+
             alert(
                 "Could not load the CSV. Run the dashboard through a local server."
             );
@@ -421,7 +604,12 @@ function loadCsv() {
     });
 }
 
+/* =========================================================
+   Initialization
+   ========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
+
     document
         .getElementById("statusFilter")
         .addEventListener("change", applyFilters);
