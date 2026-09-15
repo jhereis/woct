@@ -4,15 +4,16 @@ let filteredOperations = [];
 
 let charts = {};
 
-function formatCurrency(value) {
-  return new Intl.NumberFormat("pt-BR", {
+const currencyFormatter = new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-  }).format(value);
-}
+});
 
+function formatCurrency(value) {
+    return currencyFormatter.format(value);
+}
 const numberFormatter = new Intl.NumberFormat("pt-BR");
 
 function parseNumber(value) {
