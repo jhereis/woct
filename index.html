@@ -31,6 +31,7 @@
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -39,11 +40,16 @@
       font-family: Inter, Arial, sans-serif;
     }
 
-    .container { width: min(1440px, calc(100% - 40px)); margin: 0 auto; }
+    .container {
+      width: min(1440px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
     header {
       padding: 34px 0 24px;
       border-bottom: 1px solid var(--border);
     }
+
     .eyebrow {
       color: var(--accent);
       font-size: 11px;
@@ -52,8 +58,19 @@
       text-transform: uppercase;
       margin-bottom: 12px;
     }
-    h1 { margin: 0; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.04em; }
-    .subtitle { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 42px);
+      letter-spacing: -.04em;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     .status {
       display: inline-flex;
       align-items: center;
@@ -62,17 +79,41 @@
       color: var(--muted);
       font-size: 12px;
     }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warning); }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--warning);
+    }
+
     .dot.ok { background: var(--success); }
     .dot.error { background: var(--danger); }
 
-    main { padding: 26px 0 42px; }
-    .toolbar {
-      display: flex; gap: 12px; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; margin-bottom: 18px;
+    main {
+      padding: 26px 0 42px;
     }
-    .toolbar-left, .toolbar-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    select, input, button {
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    select,
+    input,
+    button {
       border: 1px solid var(--border);
       background: var(--panel);
       color: var(--text);
@@ -81,66 +122,340 @@
       font: inherit;
       font-size: 12px;
     }
+
     button { cursor: pointer; }
     button:hover { border-color: var(--accent); }
-    .btn-primary { background: var(--accent); color: #07111f; border-color: var(--accent); font-weight: 800; }
 
-    .grid { display: grid; gap: 16px; }
-    .kpi-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .btn-primary {
+      background: var(--accent);
+      color: #07111f;
+      border-color: var(--accent);
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .kpi-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
     .card {
       background: linear-gradient(145deg, rgba(16,36,58,.96), rgba(10,24,40,.96));
       border: 1px solid var(--border);
       border-radius: 16px;
       box-shadow: var(--shadow);
     }
-    .kpi { padding: 20px; min-height: 132px; }
-    .kpi-label { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
-    .kpi-value { margin-top: 14px; font-size: clamp(25px, 3vw, 34px); font-weight: 800; letter-spacing: -.04em; }
-    .kpi-note { color: var(--muted); margin-top: 8px; font-size: 11px; }
 
-    .two-col { grid-template-columns: 1.1fr .9fr; margin-top: 16px; }
-    .three-col { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 16px; }
-    .section { padding: 20px; min-width: 0; }
-    .section-title { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 18px; }
-    h2 { margin: 0; font-size: 15px; letter-spacing: -.02em; }
-    .section-caption { color: var(--muted); font-size: 11px; }
+    .kpi {
+      padding: 20px;
+      min-height: 132px;
+    }
 
-    .chart-wrap { height: 285px; position: relative; }
-    .chart-wrap.small { height: 230px; }
+    .kpi-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
 
-    .table-card { margin-top: 16px; overflow: hidden; }
-    .table-header { padding: 20px; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .table-scroll { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 980px; }
-    th, td { padding: 13px 16px; border-top: 1px solid var(--border); text-align: left; font-size: 12px; white-space: nowrap; }
-    th { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; background: rgba(0,0,0,.12); }
+    .kpi-value {
+      margin-top: 14px;
+      font-size: clamp(25px, 3vw, 34px);
+      font-weight: 800;
+      letter-spacing: -.04em;
+    }
+
+    .kpi-note {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 11px;
+    }
+
+    /* =========================================
+       WOCT — Introduction Card
+       ========================================= */
+
+    .woct-introduction {
+      margin: 0 0 24px;
+      padding: 28px 32px;
+      background: linear-gradient(145deg, rgba(16,36,58,.98), rgba(10,24,40,.98));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .woct-introduction-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .woct-introduction-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(105,167,255,.12);
+      border: 1px solid rgba(105,167,255,.25);
+      color: var(--accent);
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .woct-eyebrow {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+    }
+
+    .woct-introduction h2 {
+      margin: 0;
+      color: var(--text);
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -.4px;
+    }
+
+    .woct-introduction-description {
+      max-width: 1120px;
+      margin: 0;
+      color: #b8c9dc;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .woct-introduction-description strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .woct-introduction-benefits {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 26px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+    }
+
+    .woct-benefit {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .woct-benefit-number {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      line-height: 1.5;
+    }
+
+    .woct-benefit strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .woct-benefit span:last-child {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .two-col {
+      grid-template-columns: 1.1fr .9fr;
+      margin-top: 16px;
+    }
+
+    .three-col {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 16px;
+    }
+
+    .section {
+      padding: 20px;
+      min-width: 0;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: -.02em;
+    }
+
+    .section-caption {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .chart-wrap {
+      height: 285px;
+      position: relative;
+    }
+
+    .chart-wrap.small {
+      height: 230px;
+    }
+
+    .table-card {
+      margin-top: 16px;
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    th,
+    td {
+      padding: 13px 16px;
+      border-top: 1px solid var(--border);
+      text-align: left;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      background: rgba(0,0,0,.12);
+    }
+
     td { color: #dce8f5; }
     tr:hover td { background: rgba(105,167,255,.05); }
-    .badge {
-      display: inline-flex; align-items: center; border-radius: 999px;
-      padding: 5px 8px; font-size: 10px; font-weight: 800;
-      background: rgba(142,163,186,.13); color: #c8d7e8;
-    }
-    .badge.success { color: var(--success); background: rgba(67,209,154,.12); }
-    .badge.warning { color: var(--warning); background: rgba(245,189,97,.12); }
-    .badge.danger { color: var(--danger); background: rgba(255,115,115,.12); }
-    .badge.info { color: var(--info); background: rgba(155,140,255,.12); }
 
-    .empty, .error-box {
-      padding: 28px; border-radius: 12px; color: var(--muted);
-      border: 1px dashed var(--border); text-align: center;
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      background: rgba(142,163,186,.13);
+      color: #c8d7e8;
     }
-    .error-box { color: var(--danger); text-align: left; display: none; margin-top: 16px; }
-    footer { color: var(--muted); font-size: 11px; line-height: 1.7; padding: 24px 0 10px; border-top: 1px solid var(--border); }
+
+    .badge.success {
+      color: var(--success);
+      background: rgba(67,209,154,.12);
+    }
+
+    .badge.warning {
+      color: var(--warning);
+      background: rgba(245,189,97,.12);
+    }
+
+    .badge.danger {
+      color: var(--danger);
+      background: rgba(255,115,115,.12);
+    }
+
+    .badge.info {
+      color: var(--info);
+      background: rgba(155,140,255,.12);
+    }
+
+    .empty,
+    .error-box {
+      padding: 28px;
+      border-radius: 12px;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      text-align: center;
+    }
+
+    .error-box {
+      color: var(--danger);
+      text-align: left;
+      display: none;
+      margin-top: 16px;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.7;
+      padding: 24px 0 10px;
+      border-top: 1px solid var(--border);
+    }
 
     @media (max-width: 1100px) {
-      .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .two-col, .three-col { grid-template-columns: 1fr; }
+      .kpi-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .two-col,
+      .three-col {
+        grid-template-columns: 1fr;
+      }
     }
+
     @media (max-width: 650px) {
-      .container { width: min(100% - 24px, 1440px); }
-      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .kpi { padding: 15px; }
+      .container {
+        width: min(100% - 24px, 1440px);
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .kpi {
+        padding: 15px;
+      }
+
+      .woct-introduction {
+        padding: 22px;
+      }
+
+      .woct-introduction-benefits {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .woct-introduction-description {
+        font-size: 13px;
+        line-height: 1.7;
+      }
     }
   </style>
 </head>
@@ -165,12 +480,15 @@
         <select id="statusFilter">
           <option value="all">All statuses</option>
         </select>
+
         <label for="riskFilter" class="section-caption">Risk</label>
         <select id="riskFilter">
           <option value="all">All risk levels</option>
         </select>
+
         <input id="searchInput" type="search" placeholder="Search operation, team or category..." />
       </div>
+
       <div class="toolbar-right">
         <button id="reloadBtn" class="btn-primary">Reload data</button>
       </div>
@@ -178,27 +496,85 @@
 
     <div id="errorBox" class="error-box"></div>
 
+    <!-- =========================================
+         WOCT — Sobre a ferramenta
+         ========================================= -->
+
+    <section class="woct-introduction" aria-labelledby="woct-introduction-title">
+      <div class="woct-introduction-header">
+        <div class="woct-introduction-icon">◈</div>
+
+        <div>
+          <span class="woct-eyebrow">OPERATIONAL INTELLIGENCE</span>
+          <h2 id="woct-introduction-title">Sobre a ferramenta</h2>
+        </div>
+      </div>
+
+      <p class="woct-introduction-description">
+        O <strong>Wealth Operations Control Tower (WOCT)</strong> é uma ferramenta
+        de monitoramento operacional que centraliza o acompanhamento de operações,
+        status, prazos e exceções. Por meio de controles e reconciliação de dados,
+        permite identificar divergências, priorizar pendências e apoiar a tomada
+        de decisão, aumentando a visibilidade, a confiabilidade e a eficiência
+        dos processos.
+      </p>
+
+      <div class="woct-introduction-benefits">
+        <div class="woct-benefit">
+          <span class="woct-benefit-number">01</span>
+          <div>
+            <strong>Visibilidade operacional</strong>
+            <span>Centralização de operações, status e prazos.</span>
+          </div>
+        </div>
+
+        <div class="woct-benefit">
+          <span class="woct-benefit-number">02</span>
+          <div>
+            <strong>Controle e reconciliação</strong>
+            <span>Identificação de divergências e exceções.</span>
+          </div>
+        </div>
+
+        <div class="woct-benefit">
+          <span class="woct-benefit-number">03</span>
+          <div>
+            <strong>Priorização e decisão</strong>
+            <span>Apoio ao tratamento de pendências e riscos.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================
+         KPIs
+         ========================================= -->
+
     <section class="grid kpi-grid">
       <article class="card kpi">
         <div class="kpi-label">Total operations</div>
         <div id="kpiTotal" class="kpi-value">—</div>
         <div class="kpi-note">Records loaded from CSV</div>
       </article>
+
       <article class="card kpi">
         <div class="kpi-label">Requested amount</div>
         <div id="kpiAmount" class="kpi-value">—</div>
         <div class="kpi-note">Total requested amount</div>
       </article>
+
       <article class="card kpi">
         <div class="kpi-label">Outside SLA</div>
         <div id="kpiSla" class="kpi-value">—</div>
         <div class="kpi-note">Operations requiring attention</div>
       </article>
+
       <article class="card kpi">
         <div class="kpi-label">Exceptions</div>
         <div id="kpiExceptions" class="kpi-value">—</div>
         <div class="kpi-note">Flagged operational records</div>
       </article>
+
       <article class="card kpi">
         <div class="kpi-label">Critical risk</div>
         <div id="kpiCritical" class="kpi-value">—</div>
@@ -206,22 +582,35 @@
       </article>
     </section>
 
+    <!-- =========================================
+         Gráficos principais
+         ========================================= -->
+
     <section class="grid two-col">
       <article class="card section">
         <div class="section-title">
           <h2>Operations by status</h2>
           <span class="section-caption">Current lifecycle status</span>
         </div>
-        <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+        <div class="chart-wrap">
+          <canvas id="statusChart"></canvas>
+        </div>
       </article>
+
       <article class="card section">
         <div class="section-title">
           <h2>Risk distribution</h2>
           <span class="section-caption">Operational risk classification</span>
         </div>
-        <div class="chart-wrap"><canvas id="riskChart"></canvas></div>
+        <div class="chart-wrap">
+          <canvas id="riskChart"></canvas>
+        </div>
       </article>
     </section>
+
+    <!-- =========================================
+         Gráficos secundários
+         ========================================= -->
 
     <section class="grid three-col">
       <article class="card section">
@@ -229,23 +618,35 @@
           <h2>Exceptions by type</h2>
           <span class="section-caption">Control breaks</span>
         </div>
-        <div class="chart-wrap small"><canvas id="exceptionChart"></canvas></div>
+        <div class="chart-wrap small">
+          <canvas id="exceptionChart"></canvas>
+        </div>
       </article>
+
       <article class="card section">
         <div class="section-title">
           <h2>SLA performance</h2>
           <span class="section-caption">Within vs. outside SLA</span>
         </div>
-        <div class="chart-wrap small"><canvas id="slaChart"></canvas></div>
+        <div class="chart-wrap small">
+          <canvas id="slaChart"></canvas>
+        </div>
       </article>
+
       <article class="card section">
         <div class="section-title">
           <h2>Operations by category</h2>
           <span class="section-caption">Business activity</span>
         </div>
-        <div class="chart-wrap small"><canvas id="categoryChart"></canvas></div>
+        <div class="chart-wrap small">
+          <canvas id="categoryChart"></canvas>
+        </div>
       </article>
     </section>
+
+    <!-- =========================================
+         Tabela operacional
+         ========================================= -->
 
     <section class="card table-card">
       <div class="table-header">
@@ -254,6 +655,7 @@
           <div id="tableCaption" class="section-caption">Showing 0 records</div>
         </div>
       </div>
+
       <div class="table-scroll">
         <table>
           <thead>
@@ -285,15 +687,17 @@
   <script>
 /*
   WOCT - Wealth Operations Control Tower
-  Reads CSV files located in the repository root.
+  Reads CSV files located in the repository.
 
   Expected repository structure:
   /
   ├── index.html
   ├── dashboard.js
-  ├── operations_enriched.csv
-  ├── dashboard_operations.csv
-  └── reconciliation__results.csv
+  ├── data/
+  │   └── processed/
+  │       ├── operations_enriched.csv
+  │       ├── dashboard_operations.csv
+  │       └── reconciliation__results.csv
 */
 
 const DATA_URLS = [
@@ -305,7 +709,7 @@ const RECONCILIATION_URLS = [
   "./data/processed/reconciliation__results.csv",
   "./data/processed/reconciliation_results.csv"
 ];
-    
+
 let allRows = [];
 let filteredRows = [];
 const charts = {};
@@ -333,6 +737,7 @@ function getValue(row, aliases, fallback = "") {
       return value;
     }
   }
+
   return fallback;
 }
 
@@ -341,6 +746,7 @@ function toNumber(value) {
   if (value === null || value === undefined || value === "") return 0;
 
   let text = String(value).trim().replace(/[R$\s]/g, "");
+
   if (text.includes(",") && text.includes(".")) {
     if (text.lastIndexOf(",") > text.lastIndexOf(".")) {
       text = text.replace(/\./g, "").replace(",", ".");
@@ -361,7 +767,9 @@ function cleanText(value, fallback = "Not informed") {
 }
 
 function formatNumber(value) {
-  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0
+  }).format(value);
 }
 
 function formatCurrency(value) {
@@ -373,17 +781,21 @@ function formatCurrency(value) {
 }
 
 function uniqueValues(rows, fieldAliases) {
-  return [...new Set(rows.map(row => cleanText(getValue(row, fieldAliases, "Not informed"))))]
+  return [...new Set(
+    rows.map(row => cleanText(getValue(row, fieldAliases, "Not informed")))
+  )]
     .filter(Boolean)
     .sort((a, b) => a.localeCompare(b));
 }
 
 function countBy(rows, aliases) {
   const counts = {};
+
   rows.forEach(row => {
     const value = cleanText(getValue(row, aliases, "Not informed"));
     counts[value] = (counts[value] || 0) + 1;
   });
+
   return counts;
 }
 
@@ -395,6 +807,7 @@ function findSlaStatus(row) {
 
 function isOutsideSla(row) {
   const value = findSlaStatus(row).toLowerCase();
+
   return value.includes("outside") ||
     value.includes("breach") ||
     value.includes("overdue") ||
@@ -430,29 +843,41 @@ function isCritical(row) {
 function normalizeRow(row) {
   return {
     ...row,
+
     _id: cleanText(getValue(row, [
       "operation_id", "operationid", "id", "transaction_id"
     ], "N/A")),
+
     _status: cleanText(getValue(row, [
       "current_status", "status", "operation_status", "lifecycle_status"
     ])),
+
     _stage: cleanText(getValue(row, [
       "current_stage", "stage", "operation_stage", "lifecycle_stage"
     ])),
-    _priority: cleanText(getValue(row, ["priority", "priority_level"])),
+
+    _priority: cleanText(getValue(row, [
+      "priority", "priority_level"
+    ])),
+
     _team: cleanText(getValue(row, [
       "responsible_team", "team", "responsible", "owner_team"
     ])),
+
     _category: cleanText(getValue(row, [
       "operation_category", "category", "operation_type", "transaction_type"
     ])),
+
     _exceptionType: cleanText(getValue(row, [
       "exception_type", "exception_category", "exception_reason"
     ], "None")),
+
     _sla: findSlaStatus(row),
+
     _risk: cleanText(getValue(row, [
       "operational_risk", "risk", "risk_level", "risk_classification"
     ])),
+
     _amount: toNumber(getValue(row, [
       "total_requested_amount", "requested_amount", "amount", "transaction_amount",
       "valor", "value", "amount_requested"
@@ -462,24 +887,31 @@ function normalizeRow(row) {
 
 async function fetchCsv(url) {
   const response = await fetch(url, { cache: "no-store" });
+
   if (!response.ok) {
     throw new Error(`${response.status} ${response.statusText} — ${url}`);
   }
 
   const text = await response.text();
-  if (!text.trim()) throw new Error(`The CSV is empty — ${url}`);
+
+  if (!text.trim()) {
+    throw new Error(`The CSV is empty — ${url}`);
+  }
 
   return new Promise((resolve, reject) => {
     Papa.parse(text, {
       header: true,
       skipEmptyLines: true,
       transformHeader: header => header.trim(),
+
       complete: results => {
         if (results.errors?.length) {
           console.warn("CSV parsing warnings:", results.errors);
         }
+
         resolve(results.data);
       },
+
       error: reject
     });
   });
@@ -524,11 +956,17 @@ function populateFilters() {
   statusFilter.innerHTML = '<option value="all">All statuses</option>';
   riskFilter.innerHTML = '<option value="all">All risk levels</option>';
 
-  uniqueValues(allRows, ["current_status", "status", "operation_status"])
-    .forEach(value => statusFilter.add(new Option(value, value)));
+  uniqueValues(allRows, [
+    "current_status", "status", "operation_status"
+  ]).forEach(value => {
+    statusFilter.add(new Option(value, value));
+  });
 
-  uniqueValues(allRows, ["operational_risk", "risk", "risk_level", "risk_classification"])
-    .forEach(value => riskFilter.add(new Option(value, value)));
+  uniqueValues(allRows, [
+    "operational_risk", "risk", "risk_level", "risk_classification"
+  ]).forEach(value => {
+    riskFilter.add(new Option(value, value));
+  });
 }
 
 function applyFilters() {
@@ -539,12 +977,22 @@ function applyFilters() {
   filteredRows = allRows.filter(row => {
     const statusMatch = status === "all" || row._status === status;
     const riskMatch = risk === "all" || row._risk === risk;
+
     const searchable = [
-      row._id, row._status, row._stage, row._priority,
-      row._team, row._category, row._exceptionType, row._sla, row._risk
+      row._id,
+      row._status,
+      row._stage,
+      row._priority,
+      row._team,
+      row._category,
+      row._exceptionType,
+      row._sla,
+      row._risk
     ].join(" ").toLowerCase();
 
-    return statusMatch && riskMatch && (!search || searchable.includes(search));
+    return statusMatch &&
+      riskMatch &&
+      (!search || searchable.includes(search));
   });
 
   renderAll();
@@ -574,20 +1022,46 @@ function chartDefaults() {
   return {
     responsive: true,
     maintainAspectRatio: false,
+
     plugins: {
       legend: {
-        labels: { color: "#b8c9dc", font: { family: "Inter", size: 11 } }
+        labels: {
+          color: "#b8c9dc",
+          font: {
+            family: "Inter",
+            size: 11
+          }
+        }
       }
     },
+
     scales: {
       x: {
-        ticks: { color: "#8ea3ba", font: { family: "Inter", size: 10 } },
-        grid: { color: "rgba(164,184,207,.08)" }
+        ticks: {
+          color: "#8ea3ba",
+          font: {
+            family: "Inter",
+            size: 10
+          }
+        },
+        grid: {
+          color: "rgba(164,184,207,.08)"
+        }
       },
+
       y: {
         beginAtZero: true,
-        ticks: { color: "#8ea3ba", font: { family: "Inter", size: 10 }, precision: 0 },
-        grid: { color: "rgba(164,184,207,.08)" }
+        ticks: {
+          color: "#8ea3ba",
+          font: {
+            family: "Inter",
+            size: 10
+          },
+          precision: 0
+        },
+        grid: {
+          color: "rgba(164,184,207,.08)"
+        }
       }
     }
   };
@@ -599,11 +1073,15 @@ function destroyChart(name) {
 
 function createBarChart(name, canvasId, counts, horizontal = false) {
   destroyChart(name);
+
   const labels = Object.keys(counts);
+
   charts[name] = new Chart($(canvasId), {
     type: "bar",
+
     data: {
       labels,
+
       datasets: [{
         data: Object.values(counts),
         borderWidth: 0,
@@ -611,35 +1089,61 @@ function createBarChart(name, canvasId, counts, horizontal = false) {
         backgroundColor: "#69a7ff"
       }]
     },
+
     options: {
       ...chartDefaults(),
       indexAxis: horizontal ? "y" : "x",
-      plugins: { legend: { display: false } }
+
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
     }
   });
 }
 
 function createDoughnutChart(name, canvasId, counts) {
   destroyChart(name);
+
   charts[name] = new Chart($(canvasId), {
     type: "doughnut",
+
     data: {
       labels: Object.keys(counts),
+
       datasets: [{
         data: Object.values(counts),
         borderWidth: 2,
         borderColor: "#0d1b2d",
-        backgroundColor: ["#69a7ff", "#43d19a", "#f5bd61", "#ff7373", "#9b8cff", "#65d6d0"]
+        backgroundColor: [
+          "#69a7ff",
+          "#43d19a",
+          "#f5bd61",
+          "#ff7373",
+          "#9b8cff",
+          "#65d6d0"
+        ]
       }]
     },
+
     options: {
       responsive: true,
       maintainAspectRatio: false,
       cutout: "64%",
+
       plugins: {
         legend: {
           position: "bottom",
-          labels: { color: "#b8c9dc", font: { family: "Inter", size: 10 }, padding: 12 }
+
+          labels: {
+            color: "#b8c9dc",
+            font: {
+              family: "Inter",
+              size: 10
+            },
+            padding: 12
+          }
         }
       }
     }
@@ -647,26 +1151,88 @@ function createDoughnutChart(name, canvasId, counts) {
 }
 
 function renderCharts() {
-  createBarChart("status", "statusChart", countBy(filteredRows, ["current_status", "status", "operation_status"]));
-  createDoughnutChart("risk", "riskChart", countBy(filteredRows, ["operational_risk", "risk", "risk_level", "risk_classification"]));
-  createBarChart("exception", "exceptionChart", countBy(filteredRows.filter(isException), ["exception_type", "exception_category", "exception_reason"]), true);
+  createBarChart(
+    "status",
+    "statusChart",
+    countBy(filteredRows, [
+      "current_status", "status", "operation_status"
+    ])
+  );
 
-  const slaCounts = { "Within SLA": 0, "Outside SLA": 0 };
+  createDoughnutChart(
+    "risk",
+    "riskChart",
+    countBy(filteredRows, [
+      "operational_risk", "risk", "risk_level", "risk_classification"
+    ])
+  );
+
+  createBarChart(
+    "exception",
+    "exceptionChart",
+    countBy(
+      filteredRows.filter(isException),
+      ["exception_type", "exception_category", "exception_reason"]
+    ),
+    true
+  );
+
+  const slaCounts = {
+    "Within SLA": 0,
+    "Outside SLA": 0
+  };
+
   filteredRows.forEach(row => {
-    if (isOutsideSla(row)) slaCounts["Outside SLA"]++;
-    else slaCounts["Within SLA"]++;
+    if (isOutsideSla(row)) {
+      slaCounts["Outside SLA"]++;
+    } else {
+      slaCounts["Within SLA"]++;
+    }
   });
+
   createDoughnutChart("sla", "slaChart", slaCounts);
 
-  createBarChart("category", "categoryChart", countBy(filteredRows, ["operation_category", "category", "operation_type", "transaction_type"]), true);
+  createBarChart(
+    "category",
+    "categoryChart",
+    countBy(filteredRows, [
+      "operation_category", "category", "operation_type", "transaction_type"
+    ]),
+    true
+  );
 }
 
 function badgeClass(value) {
   const text = String(value).toLowerCase();
-  if (text.includes("critical") || text.includes("outside") || text.includes("breach") || text.includes("failed") || text.includes("error")) return "danger";
-  if (text.includes("high") || text.includes("pending") || text.includes("warning") || text.includes("difference")) return "warning";
-  if (text.includes("matched") || text.includes("complete") || text.includes("settled") || text.includes("within") || text.includes("low")) return "success";
-  if (text.includes("medium") || text.includes("review")) return "info";
+
+  if (
+    text.includes("critical") ||
+    text.includes("outside") ||
+    text.includes("breach") ||
+    text.includes("failed") ||
+    text.includes("error")
+  ) return "danger";
+
+  if (
+    text.includes("high") ||
+    text.includes("pending") ||
+    text.includes("warning") ||
+    text.includes("difference")
+  ) return "warning";
+
+  if (
+    text.includes("matched") ||
+    text.includes("complete") ||
+    text.includes("settled") ||
+    text.includes("within") ||
+    text.includes("low")
+  ) return "success";
+
+  if (
+    text.includes("medium") ||
+    text.includes("review")
+  ) return "info";
+
   return "";
 }
 
@@ -691,10 +1257,17 @@ function renderTable() {
   const rowsToShow = filteredRows.slice(0, 100);
 
   if (!rowsToShow.length) {
-    tbody.innerHTML = `<tr><td colspan="10"><div class="empty">No records match the selected filters.</div></td></tr>`;
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="10">
+          <div class="empty">No records match the selected filters.</div>
+        </td>
+      </tr>
+    `;
   } else {
     rowsToShow.forEach(row => {
       const tr = document.createElement("tr");
+
       tr.innerHTML = `
         <td><strong>${escapeHtml(row._id)}</strong></td>
         <td>${badge(row._status)}</td>
@@ -702,11 +1275,14 @@ function renderTable() {
         <td>${badge(row._priority)}</td>
         <td>${escapeHtml(row._team)}</td>
         <td>${escapeHtml(row._category)}</td>
-        <td>${isException(row) ? badge(row._exceptionType) : '<span class="badge success">None</span>'}</td>
+        <td>${isException(row)
+          ? badge(row._exceptionType)
+          : '<span class="badge success">None</span>'}</td>
         <td>${badge(row._sla)}</td>
         <td>${badge(row._risk)}</td>
         <td>${formatCurrency(row._amount)}</td>
       `;
+
       tbody.appendChild(tr);
     });
   }
@@ -717,17 +1293,21 @@ function renderTable() {
 
 function setStatus(message, state) {
   $("statusText").textContent = message;
-  $("statusDot").className = `dot ${state === "ok" ? "ok" : state === "error" ? "error" : ""}`;
+
+  $("statusDot").className =
+    `dot ${state === "ok" ? "ok" : state === "error" ? "error" : ""}`;
 }
 
 function showError(message) {
   $("errorBox").style.display = "block";
+
   $("errorBox").innerHTML = `
     <strong>Data loading error</strong><br>
     ${escapeHtml(message)}<br><br>
-    Confirm that <code>operations_enriched.csv</code> is in the repository root
-    and that GitHub Pages is publishing the <code>main</code> branch.
+    Confirm that the CSV exists in the configured repository path
+    and that GitHub Pages is publishing the correct branch.
   `;
+
   setStatus("Could not load the dataset", "error");
 }
 
@@ -738,6 +1318,7 @@ function hideError() {
 $("statusFilter").addEventListener("change", applyFilters);
 $("riskFilter").addEventListener("change", applyFilters);
 $("searchInput").addEventListener("input", applyFilters);
+
 $("reloadBtn").addEventListener("click", () => {
   loadData().catch(error => {
     console.error(error);
@@ -749,7 +1330,6 @@ loadData().catch(error => {
   console.error("WOCT initialization failed:", error);
   showError(error.message);
 });
-
-</script>
+  </script>
 </body>
 </html>
